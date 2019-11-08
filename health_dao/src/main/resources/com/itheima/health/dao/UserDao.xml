@@ -4,6 +4,10 @@
 <mapper namespace="com.itheima.health.dao.UserDao">
 
     <!--使用登录名，查询用户信息-->
+    <select id="findUserByUsername" parameterType="string" resultMap="userMap">
+        SELECT * FROM t_user WHERE username = #{username}
+    </select>
+
     <resultMap id="userMap" type="user">
         <id property="id" column="id"></id>
         <result property="birthday" column="birthday"></result>
@@ -15,9 +19,6 @@
         <result property="telephone" column="telephone"></result>
         <collection property="roles" column="id" select="com.itheima.health.dao.RoleDao.findRolesByUserId"></collection>
     </resultMap>
-    <select id="findUserByUsername" parameterType="string" resultMap="userMap">
-        SELECT * FROM t_user WHERE username = #{username}
-    </select>
 
     <!-- - - - - - - - - - -新增操作- - - - - - - - - - - - - - - - - - - -->
     <!--新增用户-->
@@ -28,7 +29,7 @@
         INSERT INTO t_user (birthday,gender,username,password,remark,station,telephone) VALUES (#{birthday},#{gender},#{username},#{password},#{remark},#{station},#{telephone});
     </insert>
 
-    <!--插入外键表-->
+    <!--插入用户角色外键表-->
     <insert id="setRole_User">
         INSERT INTO t_user_role (user_id,role_id) VALUES (#{user_id},#{role_id})
     </insert>
@@ -115,15 +116,9 @@
             <if test="password != null and password.length > 0">
                 password = #{password},
             </if>
-            <if test="remark != null and remark.length > 0">
                 remark = #{remark},
-            </if>
-            <if test="station != null and station.length > 0">
                 station = #{station},
-            </if>
-            <if test="telephone != null and telephone.length > 0">
-                telephone = #{telephone},
-            </if>
+                telephone = #{telephone}
         </set>
         WHERE id = #{id}
     </update>

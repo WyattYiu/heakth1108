@@ -33,9 +33,7 @@
             <if test="keyword != null and keyword.length > 0">
                 keyword = #{keyword},
             </if>
-            <if test="description != null and description.length > 0">
-                description = #{description},
-            </if>
+                description = #{description}
         </set>
         WHERE id = #{id}
     </update>
