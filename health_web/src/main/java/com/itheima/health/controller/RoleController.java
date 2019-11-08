@@ -23,7 +23,7 @@ public class RoleController {
     @Reference
     private RoleService roleService;
 
-    // 新增角色
+    // 新增角色 [role.html (add)]
     @RequestMapping("/add")
     public Result add(@RequestBody TargetAndChild targetAndChild) {
         try {
@@ -43,13 +43,13 @@ public class RoleController {
         }
     }
 
-    // 查询条件分页
+    // 查询条件分页 [role.html (find)]
     @RequestMapping("/find")
     public PageResult find(@RequestBody QueryPageBean queryPageBean) {
         return roleService.find(queryPageBean);
     }
 
-    // 编辑回显表单
+    // 编辑回显表单 [role.html (findOne)]
     @RequestMapping("/findOne")
     public Result findOne(Integer id){
         Role role = roleService.findOne(id);
@@ -60,13 +60,13 @@ public class RoleController {
         }
     }
 
-    // 编辑回显复选框
+    // 编辑回显复选框 [role.html (findChecked)]
     @RequestMapping("/findChecked")
     public Map<String,List<Integer>> findChecked(Integer id){
         return roleService.findChecked(id);
     }
 
-    // 编辑保存
+    // 编辑保存 [role.html (edit)]
     @RequestMapping("/edit")
     public Result edit(@RequestBody TargetAndChild targetAndChild) {
         try {
@@ -84,8 +84,7 @@ public class RoleController {
         }
     }
 
-
-    // 删除角色
+    // 删除角色 [role.html (delete)]
     @RequestMapping("/delete")
     public Result delete(Integer id) {
         try {
@@ -98,7 +97,7 @@ public class RoleController {
         }
     }
 
-    // 新增、编辑用户时查询所有角色信息
+    // 新增、编辑用户时查询所有角色信息 [user.html (findAll)]
     @RequestMapping("/findAll")
     public Result findAll() {
         List<Role> roleList = roleService.findAll();

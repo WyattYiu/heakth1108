@@ -22,7 +22,7 @@ public class PermissionController {
     private PermissionService permissionService;
 
 
-    // 新增权限
+    // 新增权限 [permission.html (add)]
     @RequestMapping("/add")
     public Result add(@RequestBody Permission permission) {
         try {
@@ -34,13 +34,13 @@ public class PermissionController {
         }
     }
 
-    // 分页查询 权限
+    // 分页查询 权限 [permission.html (find)]
     @RequestMapping("/find")
     public PageResult find(@RequestBody QueryPageBean queryPageBean) {
         return permissionService.find(queryPageBean);
     }
 
-    // 编辑权限返显
+    // 编辑权限返显 [permission.html (findOne)]
     @RequestMapping("/findOne")
     public Result findOne(Integer id) {
         Permission one = permissionService.findOne(id);
@@ -51,7 +51,7 @@ public class PermissionController {
         }
     }
 
-    // 编辑权限
+    // 编辑权限 [permission.html (edit)]
     @RequestMapping("/edit")
     public Result edit(@RequestBody Permission permission) {
         try {
@@ -64,7 +64,7 @@ public class PermissionController {
     }
 
 
-    // 删除权限
+    // 删除权限 [permission.html (delete)]
     @RequestMapping("/delete")
     public Result delete(Integer id) {
         try {
@@ -78,7 +78,7 @@ public class PermissionController {
     }
 
 
-//     新增、编辑角色时查询所有权限
+//     新增、编辑角色时查询所有权限 [role.html (findAll)]
     @RequestMapping("/findAll")
     public Result findAll() {
        List<Permission> permissionList = permissionService.findAll();

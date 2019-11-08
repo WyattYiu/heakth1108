@@ -39,7 +39,7 @@ public class UserController {
     @Reference
     MenuService menuService;
 
-    // 获取用户名 [main.html 216 (getUsername)]
+    // 获取用户名 [main.html (getUsername)]
     @RequestMapping(value = "/getUsername")
     public Result getUsername(){
         // 获取用户信息（从SpringSecurity）
@@ -54,7 +54,7 @@ public class UserController {
 
     }
 
-    // 新增用户 [user.html 366 (add)]
+    // 新增用户 [user.html (add)]
     @RequestMapping("/add")
     public Result add(@RequestBody TargetAndChild targetAndChild) {
         try {
@@ -68,13 +68,13 @@ public class UserController {
         }
     }
 
-    // 查询条件分页 [user.html 396 (find)]
+    // 查询条件分页 [user.html (find)]
     @RequestMapping("/find")
     public PageResult find(@RequestBody QueryPageBean queryPageBean) {
         return userService.find(queryPageBean);
     }
 
-    // 编辑回显表单 [user.html 412 (findOne)]
+    // 编辑回显表单 [user.html (findOne)]
     @RequestMapping("/findOne")
     public Result findOne(Integer id){
         com.itheima.health.pojo.User user = userService.findOne(id);
@@ -85,13 +85,13 @@ public class UserController {
         }
     }
 
-    // 编辑回显复选框 [user.html 425 (findChecked)]
+    // 编辑回显复选框 [user.html (findChecked)]
     @RequestMapping("/findChecked")
     public List<Integer> findChecked(Integer id){
         return userService.findChecked(id);
     }
 
-    // 编辑保存 [user.html 452 (edit)]
+    // 编辑保存 [user.html (edit)]
     @RequestMapping("/edit")
     public Result edit(@RequestBody TargetAndChild targetAndChild) {
         try {
@@ -105,7 +105,7 @@ public class UserController {
         }
     }
 
-    // 删除用户 [user.html 483 (delete)]
+    // 删除用户 [user.html (delete)]
     @RequestMapping("/delete")
     public Result delete(Integer id) {
         try {
@@ -154,7 +154,7 @@ public class UserController {
         return new Result(false, MessageConstant.GET_MENU_FAIL);
     }
 
-    // 修改个人信息回显 [main.html 324 (findMyself)]
+    // 修改个人信息回显 [main.html (findMyself)]
     @RequestMapping("/findMyself")
     public Result findMyself(String username){
         com.itheima.health.pojo.User user = userService.findMyself(username);
@@ -165,7 +165,7 @@ public class UserController {
         }
     }
 
-    // 更新个人信息 [main.html 354 (updateMyself)]
+    // 更新个人信息 [main.html (updateMyself)]
     @RequestMapping("/updateMyself")
     public Result updateMyself(@RequestBody com.itheima.health.pojo.User user) {
         try {
