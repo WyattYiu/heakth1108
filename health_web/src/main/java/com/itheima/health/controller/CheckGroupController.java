@@ -18,8 +18,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/checkgroup")
 public class CheckGroupController {
-        @Reference
-        CheckGroupService checkGroupService;
+
+    @Reference
+    CheckGroupService checkGroupService;
 
 
     @RequestMapping("/add")

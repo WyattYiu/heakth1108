@@ -37,7 +37,7 @@
     <!-- - - - - - - - - - -分页查询操作- - - - - - - - - - - - - - - - - - - - - - -->
     <!--分页 条件查询-->
     <select id="find" parameterType="string" resultType="user">
-        SELECT * FROM t_user
+        SELECT id,birthday,gender,username,remark,station,telephone FROM t_user
         <if test="value != null and value.length > 0">
             WHERE username LIKE concat('%',#{value},'%')
         </if>

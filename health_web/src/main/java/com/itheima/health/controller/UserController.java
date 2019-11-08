@@ -71,7 +71,8 @@ public class UserController {
     // 查询条件分页 [user.html (find)]
     @RequestMapping("/find")
     public PageResult find(@RequestBody QueryPageBean queryPageBean) {
-        return userService.find(queryPageBean);
+        PageResult pageResult = userService.find(queryPageBean);
+        return pageResult;
     }
 
     // 编辑回显表单 [user.html (findOne)]
