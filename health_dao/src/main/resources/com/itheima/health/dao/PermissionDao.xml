@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.itheima.health.dao.PermissionDao">
+
+    <!--新增权限-->
+    <insert id="add" parameterType="permission">
+        INSERT INTO t_permission (`name`,keyword,description) VALUES (#{name},#{keyword},#{description})
+    </insert>
+
+    <!--分页查询(查询所有+条件查询)-->
+    <select id="find" parameterType="string" resultType="permission">
+        SELECT * FROM t_permission
+        <if test="value != null and value.length > 0">
+            WHERE `name` LIKE concat('%',#{value},'%') OR keyword LIKE concat('%',#{value},'%')
+        </if>
+    </select>
+
+    <!--编辑权限返显-->
+    <!--编辑窗口 返显-->
+    <select id="findOne" parameterType="int" resultType="permission">
+        SELECT * FROM t_permission WHERE id = #{id}
+    </select>
+
+    <!--编辑权限-->
+    <update id="edit" parameterType="permission">
+        UPDATE t_permission
+        <set>
+            <if test="name != null and name.length > 0">
+                name = #{name},
+            </if>
+            <if test="keyword != null and keyword.length > 0">
+                keyword = #{keyword},
+            </if>
+            <if test="description != null and description.length > 0">
+                description = #{description},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!--删除检查项-->
+    <!--查询是否和角色关联-->
+    <select id="queryCountById" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM t_role_permission WHERE permission_id = #{id}
+    </select>
+
+    <!--最终删除操作-->
+    <delete id="delete" parameterType="int">
+        DELETE FROM t_permission WHERE id = #{id}
+    </delete>
+
+    <!--新增、编辑角色时查询所有权限-->
+    <select id="findAll" resultType="permission">
+        SELECT * FROM t_permission
+    </select>
+
+    <!--根据角色查询权限集合-->
+    <select id="findPermissionsByRoleId" parameterType="int" resultType="permission">
+        SELECT tp.* FROM t_permission tp,t_role_permission trp WHERE tp.id = trp.permission_id AND trp.role_id = #{roleId}
+    </select>
+
+</mapper>

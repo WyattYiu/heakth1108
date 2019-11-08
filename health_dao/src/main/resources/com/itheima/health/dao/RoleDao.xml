@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.itheima.health.dao.RoleDao">
+
+    <select id="findRolesByUserId" parameterType="int" resultMap="roleMap">
+        SELECT tr.* FROM t_role tr,t_user_role tur WHERE tr.id = tur.role_id AND tur.user_id = #{userId}
+    </select>
+
+    <resultMap id="roleMap" type="role">
+        <id property="id" column="id"/>
+        <collection property="permissions" column="id" select="com.itheima.health.dao.PermissionDao.findPermissionsByRoleId"/>
+    </resultMap>
+
+
+<!-- - - - - - - - - - -新增操作- - - - - - - - - - - - - - - - - - - -->
+    <!--新增角色-->
+    <insert id="add" parameterType="role">
+        <selectKey resultType="int" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO t_role (`name`,keyword,description) VALUES (#{name},#{keyword},#{description});
+    </insert>
+
+    <!--插入外键表-->
+    <insert id="setRole_Permission">
+        INSERT INTO t_role_permission (role_id,permission_id) VALUES (#{role_id},#{permission_id})
+    </insert>
+
+<!-- - - - - - - - - - -分页查询操作- - - - - - - - - - - - - - - - - - - - - - -->
+    <!--分页 条件查询-->
+    <select id="find" parameterType="string" resultType="role">
+        SELECT * FROM t_role
+        <if test="value != null and value.length > 0">
+            WHERE `name` LIKE concat('%',#{value},'%') OR keyword LIKE concat('%',#{value},'%')
+        </if>
+
+
+    </select>
+
+<!-- - - - - - - - - - -编辑操作- - - - - - - - - - - - - - - - - - - - - - -->
+    <!--编辑回显表单-->
+    <select id="findOne" parameterType="int" resultType="role">
+        SELECT * FROM t_role WHERE id = #{id}
+    </select>
+
+    <!--编辑回显复选框-->
+    <select id="findChecked" parameterType="int" resultType="int">
+        SELECT permission_id FROM t_role_permission WHERE role_id = #{role_id}
+    </select>
+
+    <!--删除中间表数据-->
+    <select id="deleteAssociation" parameterType="int" >
+        DELETE FROM t_role_permission WHERE role_id = #{role_id}
+    </select>
+
+    <!--更新编辑角色信息-->
+    <update id="edit" parameterType="role">
+        UPDATE t_role
+        <set>
+            <if test="name != null and name.length > 0">
+                name = #{name},
+            </if>
+            <if test="keyword != null and keyword.length > 0">
+                keyword = #{keyword},
+            </if>
+            <if test="description != null and description.length > 0">
+                description = #{description},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+<!-- - - - - - - - - - -删除操作- - - - - - - - - - - - - - - - - - - - - - -->
+    <!--查询外键数量-->
+    <select id="queryCountById" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM t_role_permission WHERE role_id = #{role_id}
+    </select>
+
+    <!--最终删除操作-->
+    <delete id="delete" parameterType="int">
+        DELETE FROM t_role WHERE id = #{id}
+    </delete>
+
+    <!-- - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - -->
+    <!--新增、编辑用户时查询所有角色信息-->
+    <select id="findAll" resultType="role">
+        SELECT * FROM t_role
+    </select>
+
+</mapper>

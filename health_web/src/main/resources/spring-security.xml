@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+            http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+            http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <!--开启Spring包扫描-->
+    <context:component-scan base-package="com.itheima.health"/>
+    <!--开启mvc注解支持-->
+    <mvc:annotation-driven/>
+
+    <!--放行静态资源-->
+    <security:http security="none" pattern="/js/**"/>
+    <security:http security="none" pattern="/css/**"/>
+    <security:http security="none" pattern="/img/**"/>
+    <security:http security="none" pattern="/plugins/**"/>
+
+    <!--配置特定资源-->
+    <!--开启表达式支持-->
+    <security:http auto-config="true" use-expressions="true">
+        <!--配置资源访问权限 认证通过即可访问-->
+        <security:intercept-url pattern="/pages/**" access="isAuthenticated()"/>
+        <!--配置登入表单信息-->
+        <security:form-login login-page="/login.html"
+                             login-processing-url="/login.do"
+                             username-parameter="username"
+                             password-parameter="password"
+                             authentication-failure-url="/login.html"
+                             default-target-url="/pages/main.html"
+                             always-use-default-target="true"/>
+        <!--配置登出-->
+        <security:logout logout-url="/logout.do" logout-success-url="/login.html" invalidate-session="true"/>
+        <!--关闭csrf过滤器-->
+        <security:csrf disabled="true"/>
+
+        <security:headers>
+            <!--设置在页面可以通过iframe访问受保护的页面，默认为不允许访问-->
+            <security:frame-options policy="SAMEORIGIN"/>
+        </security:headers>
+
+    </security:http>
+
+    <!--开启权限控制注解支持-->
+    <security:global-method-security pre-post-annotations="enabled"/>
+
+    <!--认证管理器-->
+    <security:authentication-manager>
+        <!--认证提供者-->
+        <security:authentication-provider user-service-ref="springSecurityUserService">
+            <!--密码加密策略-->
+            <security:password-encoder ref="passwordEncoder"/>
+
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+    <!--配置加密对象 BCryptPasswordEncoder-->
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+
+</beans>

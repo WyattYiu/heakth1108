@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<!-- 引入ElementUI样式 -->
+<link rel="stylesheet" href="../plugins/elementui/index.css">
+<script src="../js/vue.js"></script>
+<!-- 引入ElementUI组件库 -->
+<script src="../plugins/elementui/index.js"></script>
+<body>
+    <div id="app">
+        <el-button type="success" @click="visible = true">Button</el-button>
+        <el-dialog :visible.sync="visible" title="Hello world">
+            <p>Try Element</p>
+        </el-dialog>
+    </div>
+
+</body>
+</html>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            visible: false
+        }
+    })
+</script>

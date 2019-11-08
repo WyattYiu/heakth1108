@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.itheima.health.dao.OrderDao">
+
+    <!--根据 menberId、orderDate、setmealId查询order-->
+    <select id="isAlreadyOrder" resultMap="orderResultMap">
+        SELECT * FROM t_order
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="memberId != null">
+                and member_id = #{memberId}
+            </if>
+            <if test="orderDate != null">
+                and orderDate = #{orderDate}
+            </if>
+            <if test="orderType != null">
+                and orderType = #{orderType}
+            </if>
+            <if test="orderStatus != null">
+                and orderStatus = #{orderStatus}
+            </if>
+            <if test="setmealId != null">
+                and setmeal_id = #{setmealId}
+            </if>
+        </where>
+        <!--WHERE member_id = #{memberId} AND orderDate = #{orderDate} AND setmeal_id = #{setmealId}-->
+    </select>
+
+    <resultMap id="orderResultMap" type="com.itheima.health.pojo.Order">
+        <id column="id" property="id"/>
+        <result column="member_id" property="memberId"/>
+        <result column="orderDate" property="orderDate"/>
+        <result column="orderType" property="orderType"/>
+        <result column="orderStatus" property="orderStatus"/>
+        <result column="setmeal_id" property="setmealId"/>
+    </resultMap>
+
+    <!--进行新增预约-->
+    <insert id="addOrder" >
+        <selectKey resultType="int" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO t_order (member_id,orderDate,orderType,orderStatus,setmeal_id) VALUES (#{memberId},#{orderDate},#{orderType},#{orderStatus},#{setmealId})
+    </insert>
+
+    <!--查询预约信息-->
+    <select id="findById" parameterType="int" resultType="java.util.Map">
+        SELECT tm.`name` member,ts.`name` setmeal,td.`orderDate` orderDate,td.`orderType` orderType FROM t_member tm ,t_order td,t_setmeal ts WHERE td.`setmeal_id`=ts.`id`AND td.`member_id`=tm.`id` AND td.`id`= #{id}
+     </select>
+
+    <!--根据套餐Id查询预约数量-->
+    <select id="findOrderCountBySetmealId" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM t_order WHERE setmeal_id = #{setmealId}
+    </select>
+
+    <!--今天预约数-->
+    <select id="dayOrderCount" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM t_order WHERE orderDate = #{today}
+    </select>
+
+    <!--今日到诊数-->
+    <select id="dayVisitCount" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM t_order WHERE orderDate = #{today} AND orderStatus = '已到诊'
+    </select>
+
+    <!--本周/本月预约数-->
+    <select id="week_monthOrderCount" parameterType="map" resultType="int">
+        SELECT COUNT(*) FROM t_order WHERE orderDate BETWEEN #{begin} AND #{end}
+    </select>
+
+    <!--本周/本月到诊数-->
+    <select id="week_monthVisitCount" parameterType="map" resultType="int">
+        SELECT COUNT(*) FROM t_order WHERE orderDate BETWEEN #{begin} AND #{end} AND orderStatus = '已到诊'
+    </select>
+</mapper>
