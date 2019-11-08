@@ -5,42 +5,61 @@ import com.itheima.health.constant.MessageConstant;
 import com.itheima.health.entity.PageResult;
 import com.itheima.health.entity.QueryPageBean;
 import com.itheima.health.entity.Result;
+import com.itheima.health.pojo.Menu;
+import com.itheima.health.pojo.Role;
 import com.itheima.health.pojo.TargetAndChild;
-import com.itheima.health.pojo.User;
+import com.itheima.health.service.MenuService;
 import com.itheima.health.service.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
+/**
+ * @ClassName CheckItemController
+ * @Description TODO
+ * @Author ly
+ * @Company 深圳黑马程序员
+ * @Date 2019/10/23 15:58
+ * @Version V1.0
+ */
 @RestController
-@RequestMapping("/user")
+@RequestMapping(value = "/user")
 public class UserController {
 
     @Reference
-    private UserService userService;
+    UserService userService;
 
-    // 获取前登录用户名
-        @RequestMapping("/getUsername")
+    @Reference
+    MenuService menuService;
+
+    // 获取用户信息（用户名）
+    @RequestMapping(value = "/getUsername")
     public Result getUsername(){
+        // 获取用户信息（从SpringSecurity）
         try {
-            org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return new Result(true, MessageConstant.GET_USERNAME_SUCCESS,user.getUsername());
+            User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String username = user.getUsername();
+            return new Result(true, MessageConstant.GET_USERNAME_SUCCESS,username);
         } catch (Exception e) {
             e.printStackTrace();
-            return new Result(false,MessageConstant.GET_USERNAME_FAIL);
+            return new Result(false, MessageConstant.GET_USERNAME_FAIL);
         }
-    }
 
+    }
 
     // 新增用户
     @RequestMapping("/add")
     public Result add(@RequestBody TargetAndChild targetAndChild) {
         try {
             List<Integer> roleList = targetAndChild.getChild();
-            User user = targetAndChild.getUser();
+            com.itheima.health.pojo.User user = targetAndChild.getUser();
             userService.add(user,roleList);
             return new Result(true, MessageConstant.ADD_USER_SUCCESS);
         } catch (Exception e) {
@@ -58,11 +77,11 @@ public class UserController {
     // 编辑回显表单
     @RequestMapping("/findOne")
     public Result findOne(Integer id){
-        User user = userService.findOne(id);
+        com.itheima.health.pojo.User user = userService.findOne(id);
         if (user != null) {
-            return new Result(true,MessageConstant.QUERY_USER_SUCCESS,user);
+            return new Result(true, MessageConstant.QUERY_USER_SUCCESS,user);
         }else {
-            return new Result(false,MessageConstant.QUERY_USER_FAIL);
+            return new Result(false, MessageConstant.QUERY_USER_FAIL);
         }
     }
 
@@ -76,7 +95,7 @@ public class UserController {
     @RequestMapping("/edit")
     public Result edit(@RequestBody TargetAndChild targetAndChild) {
         try {
-            User user = targetAndChild.getUser();
+            com.itheima.health.pojo.User user = targetAndChild.getUser();
             List<Integer> roelList = targetAndChild.getChild();
             userService.edit(user,roelList);
             return new Result(true, MessageConstant.EDIT_USER_SUCCESS);
@@ -99,4 +118,62 @@ public class UserController {
         }
     }
 
+
+    //通过用户名获取菜单列表(author:liukeyin time:2019/11/17)
+    @RequestMapping(value = "/getMenuListByusername")
+    public Result getMenuListByusername() {
+        List<Menu> menuList = new ArrayList<>();
+        try {
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String username = user.getUsername();
+            com.itheima.health.pojo.User user1 = userService.findUserByUsername(username);
+            Set<Role> roles = user1.getRoles();
+
+            if (roles != null && roles.size() > 0) {
+
+                LinkedHashSet<Menu> menus =null;
+                //遍历得到role
+                for (Role role : roles) {
+                    // 父菜单
+                    menus = role.getMenus();
+                    //遍历子菜单
+                    for (Menu menu : menus) {
+                        // id 下一级
+                        System.out.println(menu.getId());
+//                        List<Menu> children = menuService.findChildrenbyparentMenuId(menu.getId());
+//                        menu.setChildren(children);
+                    }
+                }
+
+                return new Result(true, MessageConstant.GET_MENU_SUCCESS, menus);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+        return new Result(false, MessageConstant.GET_MENU_FAIL);
+    }
+
+    // 修改个人信息回显
+    @RequestMapping("/findMyself")
+    public Result findMyself(String username){
+        com.itheima.health.pojo.User user = userService.findMyself(username);
+        if (user != null) {
+            return new Result(true, MessageConstant.QUERY_MYSELF_SUCCESS,user);
+        }else {
+            return new Result(false, MessageConstant.QUERY_MYSELF_FAIL);
+        }
+    }
+
+    // 更新个人信息
+    @RequestMapping("/updateMyself")
+    public Result updateMyself(@RequestBody com.itheima.health.pojo.User user) {
+        try {
+            userService.updateMyself(user);
+            return new Result(true, MessageConstant.UPDATE_MYSELF_SUCCESS);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(false, MessageConstant.UPDATE_MYSELF_FAIL);
+        }
+    }
 }

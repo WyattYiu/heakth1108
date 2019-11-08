@@ -14,4 +14,5 @@ public class TargetAndChild implements Serializable {
     private User user;
     private List<Integer> child;
 
+    private List<Integer> menuList;
 }

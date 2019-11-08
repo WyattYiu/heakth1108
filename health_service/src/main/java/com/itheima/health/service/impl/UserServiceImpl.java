@@ -15,14 +15,21 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 
-
+/**
+ * @ClassName CheckItemServiceImpl
+ * @Description TODO
+ * @Author ly
+ * @Company 深圳黑马程序员
+ * @Date 2019/10/23 15:57
+ * @Version V1.0
+ */
 @Service(interfaceClass = UserService.class)
 @Transactional
 public class UserServiceImpl implements UserService {
 
+    // 用户
     @Autowired
-    private UserDao userDao;
-
+    UserDao userDao;
 
     @Override
     public User findUserByUsername(String username) {
@@ -80,8 +87,10 @@ public class UserServiceImpl implements UserService {
         userDao.deleteAssociation(user.getId());
         // 保存表单信息
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String pasword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(pasword);
+        if(user.getPassword()!= null && "".equals(user.getPassword())){
+            String pasword = passwordEncoder.encode(user.getPassword());
+            user.setPassword(pasword);
+        }
         userDao.edit(user);
         // 插入中间表
         setRole_User(user.getId(),roleList);
@@ -90,10 +99,27 @@ public class UserServiceImpl implements UserService {
     // 删除用户
     @Override
     public void delete(Integer id) {
-        //先查询检查项是否有检查组关联
+        //先查询用户是否有角色关联
         if (userDao.queryCountById(id) > 0) {
-            throw new RuntimeException("该检查项与检查组存在关联，不能删除");
+            throw new RuntimeException("该用户与角色存在关联，不能删除");
         }
         userDao.delete(id);
+    }
+
+    // 修改个人信息回显
+    @Override
+    public User findMyself(String username) {
+        return userDao.findMyself(username);
+    }
+
+    // 更新个人信息
+    @Override
+    public void updateMyself(User user) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if(user.getPassword()!= null && !"".equals(user.getPassword())){
+            String pasword = passwordEncoder.encode(user.getPassword());
+            user.setPassword(pasword);
+        }
+        userDao.updateMyself(user);
     }
 }

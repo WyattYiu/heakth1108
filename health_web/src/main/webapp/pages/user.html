@@ -42,6 +42,7 @@
         }
     </style>
 </head>
+
 <body class="hold-transition">
 <div id="app">
     <div class="content-header">
@@ -127,13 +128,19 @@
                                             </el-form-item>
                                         </el-col>
                                         <el-col :span="12">
-                                            <el-form-item label="出生日期">
-                                                <el-input v-model="formData.birthday"/>
-                                            </el-form-item>
-                                        </el-col>
-                                        <el-col :span="12">
                                             <el-form-item label="联系电话">
                                                 <el-input v-model="formData.telephone"/>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-col :span="12">
+                                            <el-form-item label="出生日期">
+                                                <el-date-picker v-model="formData.birthday"
+                                                                value-format="yyyy-MM-dd"
+                                                                type="date"
+                                                                placeholder="选择日期"
+                                                                :picker-options="pickerOptions0"/>
                                             </el-form-item>
                                         </el-col>
                                     </el-row>
@@ -145,12 +152,13 @@
                                         </el-col>
                                     </el-row>
                                     <el-row>
-                                        <el-col :span="24">
+                                        <el-col :span="12">
                                             <el-form-item label="身份标识">
-                                                <el-input v-model="formData.station" type="textarea"></el-input>
+                                                <el-input v-model="formData.station"></el-input>
                                             </el-form-item>
                                         </el-col>
                                     </el-row>
+
                                 </el-form>
                             </el-tab-pane>
                             <el-tab-pane label="角色信息" name="second">
@@ -196,16 +204,9 @@
                                     <el-row>
                                         <el-col :span="12">
                                             <el-form-item label="用户名" prop="username">
-                                                <el-input v-model="formData.username"/>
+                                                <el-input v-model="formData.username" :disabled="true"/>
                                             </el-form-item>
                                         </el-col>
-                                        <el-col :span="12">
-                                            <el-form-item label="密码" prop="password">
-                                                <el-input v-model="formData.password"/>
-                                            </el-form-item>
-                                        </el-col>
-                                    </el-row>
-                                    <el-row>
                                         <el-col :span="12">
                                             <el-form-item label="性别">
                                                 <el-select v-model="formData.gender">
@@ -215,14 +216,29 @@
                                                 </el-select>
                                             </el-form-item>
                                         </el-col>
-                                        <el-col :span="12">
-                                            <el-form-item label="出生日期">
-                                                <el-input v-model="formData.birthday"/>
-                                            </el-form-item>
-                                        </el-col>
+                                    </el-row>
+
+                                    <el-row>
                                         <el-col :span="12">
                                             <el-form-item label="联系电话">
                                                 <el-input v-model="formData.telephone"/>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="12">
+                                            <el-form-item label="身份标识">
+                                                <el-input v-model="formData.station"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+
+                                        </el-row>
+                                    <el-row>
+                                        <el-col :span="12">
+                                            <el-form-item label="出生日期">
+                                                <el-date-picker v-model="formData.birthday"
+                                                                value-format="yyyy-MM-dd"
+                                                                type="date"
+                                                                placeholder="选择日期"
+                                                                :picker-options="pickerOptions0"/>
                                             </el-form-item>
                                         </el-col>
                                     </el-row>
@@ -230,13 +246,6 @@
                                         <el-col :span="24">
                                             <el-form-item label="说明">
                                                 <el-input v-model="formData.remark" type="textarea"></el-input>
-                                            </el-form-item>
-                                        </el-col>
-                                    </el-row>
-                                    <el-row>
-                                        <el-col :span="24">
-                                            <el-form-item label="身份标识">
-                                                <el-input v-model="formData.station" type="textarea"></el-input>
                                             </el-form-item>
                                         </el-col>
                                     </el-row>
@@ -301,8 +310,16 @@
             rules: {
                 username: [{required: true, message: '用户名为必填项', trigger: 'blur'}],
                 password: [{required: true, message: '密码称为必填项', trigger: 'blur'}]
-            }
+            },
+            pickerOptions0: {
+                disabledDate(time) {
+                    return time.getTime() > Date.now() - 8.64e6;//如果没有后面的-8.64e6就是不可以选择今天的
+                }
+
+            },
         },
+
+
 
         created() {
             this.findPage();

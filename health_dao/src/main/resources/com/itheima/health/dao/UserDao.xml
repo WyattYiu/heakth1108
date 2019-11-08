@@ -1,17 +1,23 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-
 <mapper namespace="com.itheima.health.dao.UserDao">
 
+    <!--使用登录名，查询用户信息-->
+    <resultMap id="userMap" type="user">
+        <id property="id" column="id"></id>
+        <result property="birthday" column="birthday"></result>
+        <result property="gender" column="gender"></result>
+        <result property="username" column="username"></result>
+        <result property="password" column="password"></result>
+        <result property="remark" column="remark"></result>
+        <result property="station" column="station"></result>
+        <result property="telephone" column="telephone"></result>
+        <collection property="roles" column="id" select="com.itheima.health.dao.RoleDao.findRolesByUserId"></collection>
+    </resultMap>
     <select id="findUserByUsername" parameterType="string" resultMap="userMap">
         SELECT * FROM t_user WHERE username = #{username}
     </select>
-
-    <resultMap id="userMap" type="user">
-        <id property="id" column="id"/>
-        <collection property="roles" column="id" select="com.itheima.health.dao.RoleDao.findRolesByUserId"/>
-    </resultMap>
 
     <!-- - - - - - - - - - -新增操作- - - - - - - - - - - - - - - - - - - -->
     <!--新增用户-->
@@ -34,14 +40,12 @@
         <if test="value != null and value.length > 0">
             WHERE username LIKE concat('%',#{value},'%')
         </if>
-
-
     </select>
 
     <!-- - - - - - - - - - -编辑操作- - - - - - - - - - - - - - - - - - - - - - -->
     <!--编辑回显表单-->
     <select id="findOne" parameterType="int" resultType="user">
-        SELECT * FROM t_user WHERE id = #{id}
+        SELECT id,birthday,gender,username,remark,station,telephone FROM t_user WHERE id = #{id}
     </select>
 
     <!--编辑回显复选框-->
@@ -54,8 +58,49 @@
         DELETE FROM t_user_role WHERE user_id = #{user_id}
     </select>
 
-    <!--更新编辑角色信息-->
+    <!--更新编辑用户信息-->
     <update id="edit" parameterType="user">
+        UPDATE t_user
+        <set>
+            <if test="birthday != null">
+                birthday = #{birthday},
+            </if>
+            <if test="gender != null and gender.length > 0">
+                gender = #{gender},
+            </if>
+            <if test="username != null and username.length > 0">
+                username = #{username},
+            </if>
+            <if test="password != null and password.length > 0">
+                password = #{password},
+            </if>
+                remark = #{remark},
+                station = #{station},
+                telephone = #{telephone}
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- - - - - - - - - - -删除操作- - - - - - - - - - - - - - - - - - - - - - -->
+    <!--查询外键数量-->
+    <select id="queryCountById" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM t_user_role WHERE user_id = #{user_id}
+    </select>
+
+    <!--最终删除操作-->
+    <delete id="delete" parameterType="int">
+        DELETE FROM t_user WHERE id = #{id}
+    </delete>
+
+    <!--- - - - - - - - - - - - - - 编辑个人信息- - - - - - - - - - - - - - - - - - - - - -->
+    <!--编辑个人信息回显-->
+    <!--编辑回显表单-->
+    <select id="findMyself" parameterType="string" resultType="user">
+        SELECT id,birthday,gender,username,remark,station,telephone FROM t_user WHERE username = #{username}
+    </select>
+
+    <!--更新个人信息-->
+    <update id="updateMyself" parameterType="user">
         UPDATE t_user
         <set>
             <if test="birthday != null">
@@ -82,17 +127,5 @@
         </set>
         WHERE id = #{id}
     </update>
-
-    <!-- - - - - - - - - - -删除操作- - - - - - - - - - - - - - - - - - - - - - -->
-    <!--查询外键数量-->
-    <select id="queryCountById" parameterType="int" resultType="int">
-        SELECT COUNT(*) FROM t_user_role WHERE user_id = #{user_id}
-    </select>
-
-    <!--最终删除操作-->
-    <delete id="delete" parameterType="int">
-        DELETE FROM t_user WHERE id = #{id}
-    </delete>
-
 
 </mapper>

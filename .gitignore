@@ -17,3 +17,14 @@ generatorConfig.xml
 *.cache
 *.lock
 Test*.java
+health_common/src/main/resources/
+health_common/src/test/
+health_dao/src/test/
+health_interface/src/main/resources/
+health_interface/src/test/
+health_jobs/src/test/
+health_pojo/src/main/resources/
+health_pojo/src/test/
+health_service/src/test/
+health_web/src/test/
+healthmobile_web/src/test/

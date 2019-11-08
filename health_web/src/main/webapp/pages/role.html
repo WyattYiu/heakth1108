@@ -119,6 +119,7 @@
                                     </el-row>
                                 </el-form>
                             </el-tab-pane>
+
                             <el-tab-pane label="权限信息" name="second">
                                 <div class="checkScrol">
                                     <table class="datatable">
@@ -143,6 +144,31 @@
                                     </table>
                                 </div>
                             </el-tab-pane>
+
+                            <el-tab-pane label="菜单信息" name="third">
+                                <div class="checkScrol">
+                                    <table class="datatable">
+                                        <thead>
+                                        <tr>
+                                            <th>选择</th>
+                                            <th>主菜单名称</th>
+                                            <th>菜单描述</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr v-for="c in tableDataMenu">
+                                            <td>
+                                                <input :id="c.id" v-model="menuIds" type="checkbox" :value="c.id">
+                                            </td>
+                                            <td><label :for="c.id">{{c.name}}</label></td>
+                                            <td><label :for="c.id">{{c.keyword}}</label></td>
+                                            <td><label :for="c.id">{{c.description}}</label></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </el-tab-pane>
+
                         </el-tabs>
                     </template>
                     <div slot="footer" class="dialog-footer">
@@ -154,7 +180,7 @@
 
             <!-- 编辑标签弹层 -->
             <div class="add-form">
-                <el-dialog title="编辑检查组" :visible.sync="dialogFormVisible4Edit">
+                <el-dialog title="编辑角色" :visible.sync="dialogFormVisible4Edit">
                     <template>
                         <el-tabs v-model="activeName" type="card">
 
@@ -207,6 +233,32 @@
                                     </table>
                                 </div>
                             </el-tab-pane>
+
+                            <el-tab-pane label="菜单信息" name="third">
+                                <div class="checkScrol">
+                                    <table class="datatable">
+                                        <thead>
+                                        <tr>
+                                            <th>选择</th>
+                                            <th>主菜单名称</th>
+                                            <th>菜单描述</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr v-for="c in tableDataMenu">
+                                            <td>
+                                                <input :id="c.id" v-model="menuIds" type="checkbox" :value="c.id">
+                                            </td>
+                                            <td><label :for="c.id">{{c.name}}</label></td>
+                                            <td><label :for="c.id">{{c.keyword}}</label></td>
+                                            <td><label :for="c.id">{{c.description}}</label></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </el-tab-pane>
+
+
                         </el-tabs>
                     </template>
                     <div slot="footer" class="dialog-footer">
@@ -234,7 +286,9 @@
             dataList: [],//列表数据
             formData: {},//表单数据
             tableData: [],//新增和编辑表单中对应的权限列表数据
+            tableDataMenu: [],//新增和编辑表单中对应的菜单列表数据
             permissionIds: [],//新增和编辑表单中权限对应的复选框，基于双向绑定可以进行回显和数据提交
+            menuIds:[],//新增和编辑表单中菜单对应的复选框
             dialogFormVisible: false,//控制添加窗口显示/隐藏
             dialogFormVisible4Edit: false,//控制编辑窗口显示/隐藏
 
@@ -255,7 +309,9 @@
                 //清空基本信息
                 this.formData = {};
                 //清空权限信息
-                this.checkitemIds = [];
+                this.permissionIds = [];
+                //清空菜单信息
+                this.menuIds = [];
                 //默认第一个标签
                 this.activeName = "first";
             },
@@ -276,6 +332,19 @@
                         })
                     }
                 }).catch((error) => {
+                });
+
+                //查询所有主菜单
+                axios.get("/menu/findAll.do?level=1").then((response) => {
+                    if (response.data.flag) {
+                        this.tableDataMenu = response.data.data;
+                    } else {
+                        this.$message({
+                            type: "error",
+                            message: response.data.message
+                        })
+                    }
+                }).catch((error) => {
                 })
             },
 
@@ -284,8 +353,12 @@
                 this.$refs['dataAddForm'].validate((valid) => {
                     var role = this.formData;
                     var params = {
+                        // 角色
                         role: role,
-                        child: this.permissionIds
+                        // 权限集合
+                        child: this.permissionIds,
+                        // 菜单集合
+                        menuList:this.menuIds
                     };
                     //校验通过
                     if (valid) {
@@ -323,13 +396,28 @@
                         axios.get("/permission/findAll.do").then((response)=> {
                             if(response.data.flag){
                                 this.tableData = response.data.data;
-                                //查询勾选项-页面回显
-                                axios.get("/role/findChecked.do?id=" + row.id).then((response)=> {
-                                    this.permissionIds = response.data;
-                                });
                             }else{
                                 this.$message.error(response.data.message);
                             }
+                        });
+
+                        //查询所有主菜单
+                        axios.get("/menu/findAll.do?level=1").then((response) => {
+                            if (response.data.flag) {
+                                this.tableDataMenu = response.data.data;
+                            } else {
+                                this.$message({
+                                    type: "error",
+                                    message: response.data.message
+                                })
+                            }
+                        }).catch((error) => {
+                        })
+
+                        //查询权限/菜单勾选项-页面回显
+                        axios.get("/role/findChecked.do?id=" + row.id).then((response)=> {
+                            this.permissionIds = response.data.permissionIds;
+                            this.menuIds = response.data.menuIds;
                         });
                     }
                     else {
@@ -349,7 +437,8 @@
                     var role = this.formData;
                     var params = {
                         role: role,
-                        child: this.permissionIds
+                        child: this.permissionIds,
+                        menuList:this.menuIds
                     };
                     //校验通过
                     if (valid) {

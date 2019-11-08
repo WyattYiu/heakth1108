@@ -14,8 +14,11 @@ public interface RoleDao {
     // 新增角色
     void add(Role role);
 
-    // 插入中间表
+    // 插入角色权限中间表
     void setRole_Permission(HashMap<String, Integer> map);
+
+    // 插入角色菜单中间表
+    void setRole_Menu(HashMap<String, Integer> map);
 
     // 查询条件分页
     Page<Role> find(String queryString);
@@ -23,11 +26,17 @@ public interface RoleDao {
     // 编辑回显表单
     Role findOne(Integer id);
 
-    // 编辑回显复选框
-    List<Integer> findChecked(Integer id);
+    // 编辑回显权限复选框
+    List<Integer> findCheckedPermissions(Integer id);
 
-    // 删除中间表
-    void deleteAssociation(Integer id);
+    // 编辑回显菜单复选框
+    List<Integer> findCheckedMenus(Integer id);
+
+    // 删除权限中间表
+    void deleteRole_Permission(Integer id);
+
+    // 删除菜单中间表
+    void deleteRole_menu(Integer id);
 
     // 保存表单信息
     void edit(Role role);
@@ -40,5 +49,11 @@ public interface RoleDao {
 
     // 新增、编辑用户时查询所有角色信息
     List<Role> findAll();
-}
 
+    // 查询角色是否有关联 权限表
+    Integer queryPermissionCountById(Integer id);
+
+    // 查询角色是否有关联 菜单表
+    Integer queryMenuCountById(Integer id);
+
+}

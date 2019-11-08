@@ -25,10 +25,6 @@ public class MessageConstant {
     public static final String PIC_UPLOAD_FAIL = "图片上传失败";
     public static final String ADD_SETMEAL_FAIL = "新增套餐失败";
     public static final String ADD_SETMEAL_SUCCESS = "新增套餐成功";
-    public static final String EDIT_SETMEAL_FAIL = "编辑套餐失败";
-    public static final String EDIT_SETMEAL_SUCCESS = "编辑套餐成功";
-    public static final String DELETE_SETMEAL_FAIL = "删除套餐失败";
-    public static final String DELETE_SETMEAL_SUCCESS = "删除套餐成功";
     public static final String IMPORT_ORDERSETTING_FAIL = "批量导入预约设置数据失败";
     public static final String IMPORT_ORDERSETTING_SUCCESS = "批量导入预约设置数据成功";
     public static final String GET_ORDERSETTING_SUCCESS = "获取预约设置数据成功";
@@ -56,6 +52,7 @@ public class MessageConstant {
     public static final String ORDER_FULL = "预约已满";
     public static final String HAS_ORDERED = "已经完成预约，不能重复预约";
     public static final String ORDER_SUCCESS = "预约成功";
+    public static final String ORDER_FAIL = "预约失败";
     public static final String GET_USERNAME_SUCCESS = "获取当前登录用户名称成功";
     public static final String GET_USERNAME_FAIL = "获取当前登录用户名称失败";
     public static final String GET_MENU_SUCCESS = "获取当前登录用户菜单成功";
@@ -68,9 +65,12 @@ public class MessageConstant {
     public static final String GET_BUSINESS_REPORT_FAIL = "获取运营统计数据失败";
     public static final String GET_SETMEAL_LIST_SUCCESS = "查询套餐列表数据成功";
     public static final String GET_SETMEAL_LIST_FAIL = "查询套餐列表数据失败";
+    public static final String DELETE_SETMEAL_SUCCESS ="删除套餐成功";
+    public static final String DELETE_SETMEAL_FAIL ="删除套餐失败";
+    public static final String EDIT_SETMEAL_SUCCESS ="编辑套餐成功";
+    public static final String EDIT_SETMEAL_FAIL ="编辑套餐失败";
 
-
-//    ---------------------权限-----------------------------------
+    //    ---------------------权限-----------------------------------
     public static final String ADD_PERMISSION_SUCCESS = "新增权限成功";
     public static final String ADD_PERMISSION_FAIL = "新增权限失败";
 
@@ -83,7 +83,7 @@ public class MessageConstant {
     public static final String DELETE_PERMISSION_SUCCESS = "删除权限成功";
     public static final String DELETE_PERMISSION_FAIL = "删除权限失败";
 
-// ------------------------角色-----------------------------------------
+    // ------------------------角色-----------------------------------------
     public static final String ADD_ROLE_SUCCESS = "新增角色成功";
     public static final String ADD_ROLE_FAIL = "新增角色失败";
 
@@ -108,4 +108,27 @@ public class MessageConstant {
 
     public static final String DELETE_USER_SUCCESS = "删除角色成功";
     public static final String DELETE_USER_FAIL = "删除角色失败";
+
+    // ------------------------更新个人信息-----------------------------------------
+    public static final String UPDATE_MYSELF_SUCCESS = "更新个人信息成功";
+    public static final String UPDATE_MYSELF_FAIL = "更新个人信息失败";
+
+    public static final String QUERY_MYSELF_SUCCESS = "查询个人信息成功";
+    public static final String QUERY_MYSELF_FAIL = "查询个人信息失败";
+
+
+    /**
+     *
+     * sj菜单新增
+     */
+
+    //菜单
+    public static final String QUERY_MENU_SUCCESS = "查询菜单表成功";
+    public static final String QUERY_MENU_FAIL="查询菜单表失败";
+    public static final String DELETE_MENU_SUCCESS = "删除菜单表成功";
+    public static final String DELETE_MENU_FAIL="删除菜单表失败";
+    public static final String EDIT_MENU_SUCCESS = "编辑菜单表成功";
+    public static final String EDIT_MENU_FAIL="编辑菜单表失败";
+    public static final String ADD_MENU_SUCCESS="添加菜单表成功";
+    public static final String ADD_MENU_FAIL="添加菜单表失败";
 }

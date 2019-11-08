@@ -1,20 +1,23 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-
 <mapper namespace="com.itheima.health.dao.RoleDao">
 
+    <!--使用用户id查询角色的集合-->
     <select id="findRolesByUserId" parameterType="int" resultMap="roleMap">
-        SELECT tr.* FROM t_role tr,t_user_role tur WHERE tr.id = tur.role_id AND tur.user_id = #{userId}
+        SELECT r.* FROM t_role r,t_user_role ur WHERE r.id = ur.role_id AND ur.user_id = #{userId}
     </select>
 
     <resultMap id="roleMap" type="role">
-        <id property="id" column="id"/>
-        <collection property="permissions" column="id" select="com.itheima.health.dao.PermissionDao.findPermissionsByRoleId"/>
+        <id property="id" column="id"></id>
+        <result property="name" column="name"></result>
+        <result property="keyword" column="keyword"></result>
+        <result property="description" column="description"></result>
+        <collection property="permissions" column="id" select="com.itheima.health.dao.PermissionDao.findPermissionsByRoleId"></collection>
+        <!--<collection property="menus" column="id" select="com.itheima.health.dao.MenuDao.findMenusByRoleId"></collection>-->
     </resultMap>
 
-
-<!-- - - - - - - - - - -新增操作- - - - - - - - - - - - - - - - - - - -->
+    <!-- - - - - - - - - - -新增操作- - - - - - - - - - - - - - - - - - - -->
     <!--新增角色-->
     <insert id="add" parameterType="role">
         <selectKey resultType="int" order="AFTER" keyProperty="id">
@@ -23,12 +26,17 @@
         INSERT INTO t_role (`name`,keyword,description) VALUES (#{name},#{keyword},#{description});
     </insert>
 
-    <!--插入外键表-->
+    <!--插入角色权限外键表-->
     <insert id="setRole_Permission">
         INSERT INTO t_role_permission (role_id,permission_id) VALUES (#{role_id},#{permission_id})
     </insert>
 
-<!-- - - - - - - - - - -分页查询操作- - - - - - - - - - - - - - - - - - - - - - -->
+    <!--插入角色菜单外键表-->
+    <insert id="setRole_Menu">
+        INSERT INTO t_role_menu (role_id,menu_id) VALUES (#{role_id},#{menu_id})
+    </insert>
+
+    <!-- - - - - - - - - - -分页查询操作- - - - - - - - - - - - - - - - - - - - - - -->
     <!--分页 条件查询-->
     <select id="find" parameterType="string" resultType="role">
         SELECT * FROM t_role
@@ -39,20 +47,30 @@
 
     </select>
 
-<!-- - - - - - - - - - -编辑操作- - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- - - - - - - - - - -编辑操作- - - - - - - - - - - - - - - - - - - - - - -->
     <!--编辑回显表单-->
     <select id="findOne" parameterType="int" resultType="role">
         SELECT * FROM t_role WHERE id = #{id}
     </select>
 
-    <!--编辑回显复选框-->
-    <select id="findChecked" parameterType="int" resultType="int">
+    <!--编辑回显 权限复选框-->
+    <select id="findCheckedPermissions" parameterType="int" resultType="int">
         SELECT permission_id FROM t_role_permission WHERE role_id = #{role_id}
     </select>
 
-    <!--删除中间表数据-->
-    <select id="deleteAssociation" parameterType="int" >
+    <!--编辑回显 菜单复选框-->
+    <select id="findCheckedMenus" parameterType="int" resultType="int">
+        SELECT menu_id FROM t_role_menu WHERE role_id = #{role_id}
+    </select>
+
+    <!--删除权限中间表数据-->
+    <select id="deleteRole_Permission" parameterType="int" >
         DELETE FROM t_role_permission WHERE role_id = #{role_id}
+    </select>
+
+    <!--删除菜单中间表数据-->
+    <select id="deleteRole_menu" parameterType="int" >
+        DELETE FROM t_role_menu WHERE role_id = #{role_id}
     </select>
 
     <!--更新编辑角色信息-->
@@ -65,17 +83,20 @@
             <if test="keyword != null and keyword.length > 0">
                 keyword = #{keyword},
             </if>
-            <if test="description != null and description.length > 0">
-                description = #{description},
-            </if>
+                description = #{description}
         </set>
         WHERE id = #{id}
     </update>
 
-<!-- - - - - - - - - - -删除操作- - - - - - - - - - - - - - - - - - - - - - -->
-    <!--查询外键数量-->
-    <select id="queryCountById" parameterType="int" resultType="int">
+    <!-- - - - - - - - - - -删除操作- - - - - - - - - - - - - - - - - - - - - - -->
+    <!--查询权限外键数量-->
+    <select id="queryPermissionCountById" parameterType="int" resultType="int">
         SELECT COUNT(*) FROM t_role_permission WHERE role_id = #{role_id}
+    </select>
+
+    <!--查询菜单外键数量-->
+    <select id="queryMenuCountById" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM t_role_menu WHERE role_id = #{role_id}
     </select>
 
     <!--最终删除操作-->

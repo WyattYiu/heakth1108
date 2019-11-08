@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -26,9 +27,14 @@ public class RoleController {
     @RequestMapping("/add")
     public Result add(@RequestBody TargetAndChild targetAndChild) {
         try {
+            // 角色表单
             Role role = targetAndChild.getRole();
+            // 权限集合
             List<Integer> permissionList = targetAndChild.getChild();
-            roleService.add(role,permissionList);
+            // 菜单集合
+            List<Integer> menuList = targetAndChild.getMenuList();
+
+            roleService.add(role,permissionList,menuList);
 
             return new Result(true, MessageConstant.ADD_ROLE_SUCCESS);
         } catch (Exception e) {
@@ -48,15 +54,15 @@ public class RoleController {
     public Result findOne(Integer id){
         Role role = roleService.findOne(id);
         if (role != null) {
-            return new Result(true,MessageConstant.QUERY_ROLE_SUCCESS,role);
+            return new Result(true, MessageConstant.QUERY_ROLE_SUCCESS,role);
         }else {
-            return new Result(false,MessageConstant.QUERY_ROLE_FAIL);
+            return new Result(false, MessageConstant.QUERY_ROLE_FAIL);
         }
     }
 
     // 编辑回显复选框
     @RequestMapping("/findChecked")
-    public List<Integer> findChecked(Integer id){
+    public Map<String,List<Integer>> findChecked(Integer id){
         return roleService.findChecked(id);
     }
 
@@ -64,9 +70,13 @@ public class RoleController {
     @RequestMapping("/edit")
     public Result edit(@RequestBody TargetAndChild targetAndChild) {
         try {
+            // 角色信息
             Role role = targetAndChild.getRole();
+            // 权限集合
             List<Integer> permissionList = targetAndChild.getChild();
-            roleService.edit(role,permissionList);
+            // 菜单集合
+            List<Integer> menuList = targetAndChild.getMenuList();
+            roleService.edit(role,permissionList,menuList);
             return new Result(true, MessageConstant.EDIT_ROLE_SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,8 +103,8 @@ public class RoleController {
     public Result findAll() {
         List<Role> roleList = roleService.findAll();
         if (roleList != null && roleList.size()>0) {
-            return new Result(true,MessageConstant.QUERY_ROLE_SUCCESS,roleList);
+            return new Result(true, MessageConstant.QUERY_ROLE_SUCCESS,roleList);
         }
-        return new Result(false,MessageConstant.QUERY_ROLE_FAIL);
+        return new Result(false, MessageConstant.QUERY_ROLE_FAIL);
     }
 }

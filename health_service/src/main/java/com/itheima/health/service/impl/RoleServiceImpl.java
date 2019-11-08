@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Service(interfaceClass = RoleService.class)
@@ -24,15 +25,19 @@ public class RoleServiceImpl implements RoleService {
 
     // 新增角色
     @Override
-    public void add(Role role, List<Integer> permissionList) {
+    public void add(Role role, List<Integer> permissionList, List<Integer> menuList) {
 
         // 插入role表
         roleDao.add(role);
-        // 插入中间表
+
+        // 插入角色权限中间表
         setRole_Permission(role.getId(),permissionList);
+
+        // 插入角色菜单中间表
+        setRole_Menu(role.getId(),menuList);
     }
 
-    // 插入中间表
+    // 插入角色权限中间表
     public void setRole_Permission(Integer RoleId, List<Integer> permissionList){
         HashMap<String, Integer> map = new HashMap();
         map.put("role_id",RoleId);
@@ -40,6 +45,18 @@ public class RoleServiceImpl implements RoleService {
             for (Integer integer : permissionList) {
                 map.put("permission_id",integer);
                 roleDao.setRole_Permission(map);
+            }
+        }
+    }
+
+    // 插入角色菜单中间表
+    public void setRole_Menu(Integer RoleId, List<Integer> menuList){
+        HashMap<String, Integer> map = new HashMap();
+        map.put("role_id",RoleId);
+        if (menuList != null && menuList.size()>0 ) {
+            for (Integer integer : menuList) {
+                map.put("menu_id",integer);
+                roleDao.setRole_Menu(map);
             }
         }
     }
@@ -61,27 +78,34 @@ public class RoleServiceImpl implements RoleService {
 
     // 编辑回显复选框
     @Override
-    public List<Integer> findChecked(Integer id) {
-        return roleDao.findChecked(id);
+    public Map<String,List<Integer>> findChecked(Integer id) {
+        HashMap<String, List<Integer>> map = new HashMap<>();
+        map.put("permissionIds",roleDao.findCheckedPermissions(id));
+        map.put("menuIds",roleDao.findCheckedMenus(id));
+        return map;
     }
 
     // 编辑保存
     @Override
-    public void edit(Role role, List<Integer> permissionList) {
-        // 删除中间表
-        roleDao.deleteAssociation(role.getId());
+    public void edit(Role role, List<Integer> permissionList, List<Integer> menuList) {
+        // 删除权限中间表
+        roleDao.deleteRole_Permission(role.getId());
+        // 删除菜单中间表
+        roleDao.deleteRole_menu(role.getId());
         // 保存表单信息
         roleDao.edit(role);
-        // 插入中间表
+        // 插入权限中间表
         setRole_Permission(role.getId(),permissionList);
+        // 插入角色菜单中间表
+        setRole_Menu(role.getId(),menuList);
     }
 
     // 删除角色
     @Override
     public void delete(Integer id) {
-        //先查询检查项是否有检查组关联
-        if (roleDao.queryCountById(id) > 0) {
-            throw new RuntimeException("该检查项与检查组存在关联，不能删除");
+        //先查询角色是否有角色菜单关联
+        if (roleDao.queryPermissionCountById(id) > 0 || roleDao.queryMenuCountById(id) > 0 ) {
+            throw new RuntimeException("该角色与角色菜单存在关联，不能删除");
         }
         roleDao.delete(id);
     }

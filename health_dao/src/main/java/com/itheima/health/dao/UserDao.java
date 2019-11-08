@@ -37,4 +37,10 @@ public interface UserDao {
 
     // 删除角色表
     void delete(Integer id);
+
+    // 修改个人信息回显
+    User findMyself(String username);
+
+    // 更新个人信息
+    void updateMyself(User user);
 }
