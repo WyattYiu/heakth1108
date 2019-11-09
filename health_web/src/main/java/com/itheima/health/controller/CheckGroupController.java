@@ -6,7 +6,7 @@ import com.itheima.health.entity.PageResult;
 import com.itheima.health.entity.QueryPageBean;
 import com.itheima.health.entity.Result;
 import com.itheima.health.pojo.CheckGroup;
-import com.itheima.health.pojo.CheckGroupAndCheckItemIds;
+import com.itheima.health.pojo.TargetAndChild;
 import com.itheima.health.service.CheckGroupService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,10 +24,10 @@ public class CheckGroupController {
 
 
     @RequestMapping("/add")
-    public Result add(@RequestBody CheckGroupAndCheckItemIds checkGroupAndCheckItemIds) {
+    public Result add(@RequestBody TargetAndChild targetAndChild) {
         try {
-            List<Integer> integerList = checkGroupAndCheckItemIds.getCheckItemIds();
-            CheckGroup checkGroup = checkGroupAndCheckItemIds.getCheckGroup();
+            List<Integer> integerList = targetAndChild.getChild();
+            CheckGroup checkGroup = targetAndChild.getCheckGroup();
             checkGroupService.add(checkGroup,integerList);
             return new Result(true, MessageConstant.ADD_CHECKGROUP_SUCCESS);
         } catch (Exception e) {
@@ -57,10 +57,10 @@ public class CheckGroupController {
     }
 
     @RequestMapping("/edit")
-    public Result edit(@RequestBody CheckGroupAndCheckItemIds checkGroupAndCheckItemIds) {
+    public Result edit(@RequestBody TargetAndChild targetAndChild) {
         try {
-            List<Integer> integerList = checkGroupAndCheckItemIds.getCheckItemIds();
-            CheckGroup checkGroup = checkGroupAndCheckItemIds.getCheckGroup();
+            List<Integer> integerList = targetAndChild.getChild();
+            CheckGroup checkGroup = targetAndChild.getCheckGroup();
             checkGroupService.edit(checkGroup,integerList);
             return new Result(true, MessageConstant.EDIT_CHECKGROUP_SUCCESS);
         } catch (Exception e) {

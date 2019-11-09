@@ -29,8 +29,10 @@
         <property name="typeAliasesPackage" value="com.itheima.health.pojo"/>
         
         <!--读取核心配置文件-->
-        <!--<property name="configLocation" value="classpath:sqlMapConfig.xml"/>-->
-        
+        <property name="configLocation" value="classpath:sqlMapConfig.xml"/>
+
+
+
         <!--导入PageHelper-->
         <property name="plugins">
             <array>
@@ -43,6 +45,8 @@
                 </bean>
             </array>
         </property>
+
+
     </bean>
 
     <!--MapperScan扫描-->

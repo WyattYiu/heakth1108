@@ -15,16 +15,16 @@
 
     <mvc:annotation-driven>
         <mvc:message-converters register-defaults="true">
-            <!--页面返回都是json格式-->
+            <!--不需要视图解析器，项目中的所有的请求都返回json数据结构-->
             <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
                 <property name="supportedMediaTypes" value="application/json"/>
                 <property name="features">
-                    <list>
+                    <array>
                         <!--Map类型格式化，接收参数允许空值-->
                         <value>WriteMapNullValue</value>
                         <!--日期类型格式化-->
                         <value>WriteDateUseDateFormat</value>
-                    </list>
+                    </array>
                 </property>
             </bean>
         </mvc:message-converters>
@@ -32,8 +32,8 @@
     <!-- 指定应用名称 -->
     <dubbo:application name="health_web" />
     <!--指定服务注册中心地址-->
-    <dubbo:registry address="zookeeper://localhost:2181"/>
-    <!--批量扫描-->
+    <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
+    <!--批量扫描，调用Service的服务的时候，可以使用注解@Reference-->
     <dubbo:annotation package="com.itheima.health" />
     <!--
         超时全局设置 10分钟
@@ -49,7 +49,8 @@
         <property name="defaultEncoding" value="UTF-8"/>
     </bean>
 
-    <import resource="classpath:applicationContext-redis.xml"/>
-    <import resource="spring-security.xml"/>
-
+    <!--同时加载redis-->
+    <import resource="classpath:applicationContext-redis.xml"></import>
+    <!--同时加载SpringSecurity-->
+    <import resource="classpath:spring-security.xml"></import>
 </beans>

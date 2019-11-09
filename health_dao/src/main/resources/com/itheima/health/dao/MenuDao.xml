@@ -1,8 +1,102 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-
 <mapper namespace="com.itheima.health.dao.MenuDao">
 
+   <select id="findMenusByRoleId" parameterType="int" resultType="menu">
+       SELECT m.* FROM t_menu m ,t_role_menu rm WHERE m.id=rm.menu_id AND rm.role_id=#{role_id} and m.level=1
+   </select>
 
+    <!--根据菜单的父类id,查询子类菜单-->
+    <select id="findChildrenbyparentMenuId" parameterType="int" resultType="menu">
+        SELECT * FROM t_menu WHERE parentMenuId=#{id}
+    </select>
+
+    <!--sj
+    *
+    **sj新增
+    *
+    *
+    -->
+
+    <!--添加一条菜单数值-->
+    <insert id="addMenu" parameterType="Menu">
+        INSERT INTO t_menu (name,linkUrl,path,priority,description,icon,parentMenuId)
+        VALUES
+        (#{name},#{linkUrl},#{path},#{priority},#{description},#{icon},#{parentMenuId})
+    </insert>
+    <!--删除一条菜单数据-->
+    <delete id="deleteMenuById" parameterType="Integer">
+        DELETE FROM t_menu WHERE id = #{id}
+    </delete>
+    <!--删除与menu和role关联表的数据-->
+    <delete id="deleteRoleAndMenuById" parameterType="Integer">
+        DELETE FROM t_role_menu WHERE menu_id = #{id}
+    </delete>
+    <!--更改menu中的值-->
+    <update id="updateMenuById" parameterType="Menu">
+        UPDATE t_menu
+
+        <set>
+            <if test="name != null and name.length>0">
+                name = #{name},
+            </if>
+            <if test="linkUrl != null and linkUrl.length>0">
+                linkUrl = #{linkUrl},
+            </if>
+            <if test="path != null and path.length>0">
+                path = #{path},
+            </if>
+            <if test="priority != null and priority.length>0">
+                priority = #{priority},
+            </if>
+            <if test="description != null and description.length>0">
+                description = #{description},
+            </if>
+            <if test="icon != null and icon.length>0">
+                icon = #{icon},
+            </if>
+            <if test="parentMenuId != null and parentMenuId.length>0">
+                parentMenuId = #{parentMenuId}
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!--添加关联表的数值
+    <insert id="setRoleAndMenu" parameterType="HashMap">
+        INSERT INTO t_role_menu (role_id,menu_id)
+        VALUES (#{role_id},#{menu_id})
+    </insert>
+    -->
+
+    <!--根据id查询一条数据-->
+    <select id="findMenuById" parameterType="Integer" resultType="Menu">
+        SELECT * FROM t_menu where id = #{id}
+    </select>
+
+    <!--查询各级别的信息-->
+    <select id="findAll" parameterType="Integer" resultType="menu">
+        SELECT * FROM t_menu WHERE level= #{level}
+    </select>
+
+    <!--根据id修改Menu的级别-->
+    <update id="updateLevelById" parameterType="Map">
+        UPDATE t_menu
+        <set>
+            <if test="name != null and name.length>0">
+                level = #{level}
+            </if>
+        </set>
+        WHERE name = #{name}
+    </update>
+
+    <!--分页查询-->
+    <select id="findPageQuery" parameterType="String" resultType="menu">
+        SELECT * FROM t_menu
+        <if test="value!=null and value.length>0">
+            WHERE name = #{value} or name like concat('%',#{value},'%')
+        </if>
+    </select>
 </mapper>
+

@@ -11,5 +11,7 @@
             <!--<property name="dialect" value="mysql"/>-->
         <!--</plugin>-->
     <!--</plugins>-->
-
+    <!--<settings>-->
+        <!--<setting name="callSettersOnNulls" value="true"/>-->
+    <!--</settings>-->
 </configuration>
