@@ -98,5 +98,15 @@
             WHERE name = #{value} or name like concat('%',#{value},'%')
         </if>
     </select>
+
+    <!--根据当前登录用户名获取父级菜单集合-->
+    <select id="getParentMenuListByUsername" parameterType="string" resultType="menu">
+        SELECT DISTINCT m.* FROM t_menu m,t_role_menu rm,(SELECT r.id FROM t_user u,t_role r,t_user_role ur WHERE u.id = ur.user_id AND r.id = ur.role_id AND u.username = #{username}) r WHERE m.id = rm.menu_id AND r.id = rm.role_id AND level = 1
+    </select>
+
+    <!--根据上级菜单id查询下级菜单-->
+    <select id="getChildrenByParentMenuId" parameterType="int" resultType="menu">
+        SELECT * FROM t_menu WHERE parentMenuId = #{parentMenuId}
+    </select>
 </mapper>
 

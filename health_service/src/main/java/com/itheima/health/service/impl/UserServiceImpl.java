@@ -31,6 +31,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserDao userDao;
 
+
     @Override
     public User findUserByUsername(String username) {
         return userDao.findUserByUsername(username);

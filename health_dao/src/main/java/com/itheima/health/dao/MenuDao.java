@@ -42,4 +42,10 @@ public interface MenuDao {
 
 
     Page<Menu> findPageQuery(String queryString);
+
+    // 根据登录用户名获取父级菜单集合
+    List<Menu> getParentMenuListByUsername(String username);
+
+    // 根据上级菜单id查询下级菜单
+    List<Menu> getChildrenByParentMenuId(Integer parentMenuId);
 }

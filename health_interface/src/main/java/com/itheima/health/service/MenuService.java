@@ -31,5 +31,10 @@ public interface MenuService {
     //查询全部(加上级别)
     List<Menu> findAll(Integer level);
 
+
+    // 分页条件查询
     PageResult findPageQuery(Integer currentPage, Integer pageSize, String queryString);
+
+    // 根据登录用户名动态显示菜单
+    List<Menu> getMenuListByUsername(String username);
 }

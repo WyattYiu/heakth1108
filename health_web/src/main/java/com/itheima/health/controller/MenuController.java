@@ -7,6 +7,8 @@ import com.itheima.health.entity.QueryPageBean;
 import com.itheima.health.entity.Result;
 import com.itheima.health.pojo.Menu;
 import com.itheima.health.service.MenuService;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -90,5 +92,19 @@ public class MenuController {
                 queryPageBean.getQueryString()
         );
         return pageResult;
+    }
+
+    //根据当前登录的用户名动态展示菜单列表
+    @RequestMapping("/getMenuListByUsername")
+    public Result getMenuListByUsername() {
+
+        try {
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            List<Menu> menuList = menuServise.getMenuListByUsername(user.getUsername());
+            return new Result(true, MessageConstant.GET_MENU_SUCCESS, menuList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(false, MessageConstant.GET_MENU_FAIL);
+        }
     }
 }

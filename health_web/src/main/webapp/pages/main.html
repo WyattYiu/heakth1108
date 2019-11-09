@@ -57,17 +57,22 @@
             <el-container>
                 <el-aside width="200px">
                     <el-menu>
-                        <el-submenu v-for="menu in menuList" :index="menu.path">
+
+                        <label v-for="menu in menuList" :index="menu.path">
+                            <el-submenu :index="menu.path" v-if="menu.children">
                             <template slot="title">
                                 <i class="fa" :class="menu.icon"></i>
                                 {{menu.name}}
                             </template>
+
                             <template v-for="child in menu.children">
                                 <el-menu-item :index="child.path">
                                     <a :href="child.linkUrl" target="right">{{child.name}}</a>
                                 </el-menu-item>
                             </template>
                         </el-submenu>
+                        </label>
+
                     </el-menu>
                 </el-aside>
                 <el-container>
@@ -163,136 +168,7 @@
         el: '#app',
         data:{
             username:null,
-            menuList:[
-                {
-                    "path": "1",
-                    "name": "工作台",
-                    "icon":"fa-dashboard",
-                    "children": []
-                },
-                {
-                    "path": "2",
-                    "name": "会员管理",
-                    "icon":"fa-user-md",
-                    "children": [
-                        {
-                            "path": "/2-1",
-                            "name": "会员档案",
-                            "linkUrl":"member.html",
-                            "children":[]
-                        },
-                        {
-                            "path": "/2-2",
-                            "name": "体检上传",
-                            "children":[]
-                        },
-                        {
-                            "path": "/2-3",
-                            "name": "会员统计",
-                            "linkUrl":"all-item-list.html",
-                            "children":[]
-                        },
-                    ]
-                },
-                {
-                    "path": "3",
-                    "name": "预约管理",
-                    "icon":"fa-tty",
-                    "children": [
-                        {
-                            "path": "/3-1",
-                            "name": "预约列表",
-                            "linkUrl":"ordersettinglist.html",
-                            "children":[]
-                        },
-                        {
-                            "path": "/3-2",
-                            "name": "预约设置",
-                            "linkUrl":"ordersetting.html",
-                            "children":[]
-                        },
-                        {
-                            "path": "/3-3",
-                            "name": "套餐管理",
-                            "linkUrl":"setmeal.html",
-                            "children":[]
-                        },
-                        {
-                            "path": "/3-4",
-                            "name": "检查组管理",
-                            "linkUrl":"checkgroup.html",
-                            "children":[]
-                        },
-                        {
-                            "path": "/3-5",
-                            "name": "检查项管理",
-                            "linkUrl":"checkitem.html",
-                            "children":[]
-                        },
-                    ]
-                },
-
-                {
-                    "path": "5",     //菜单项所对应的路由路径
-                    "name": "统计分析",     //菜单项名称
-                    "icon":"fa fa-line-chart",
-                    "children":[//是否有子菜单，若没有，则为[]
-                        {
-                            "path": "/5-1",
-                            "name": "会员数量",
-                            "linkUrl":"report_member.html",
-                            "children":[]
-                        },
-
-                        {
-                            "path": "/5-2",
-                            "name": "预约套餐占比统计",
-                            "linkUrl":"report_setmeal.html",
-                            "children":[]
-                        },
-
-                        {
-                            "path": "/5-3",
-                            "name": "运营数据统计",
-                            "linkUrl":"report_business.html",
-                            "children":[]
-                        }
-                    ]
-                },
-                {
-                    "path": "6",     //菜单项所对应的路由路径
-                    "name": "系统管理",     //菜单项名称
-                    "icon":"fa fa-cog",
-                    "children":[//是否有子菜单，若没有，则为[]
-                        {
-                            "path": "/6-1",
-                            "name": "用户管理",
-                            "linkUrl":"user.html",
-                            "children":[]
-                        },
-
-                        {
-                            "path": "/6-2",
-                            "name": "角色管理",
-                            "linkUrl":"role.html",
-                            "children":[]
-                        },
-
-                        {
-                            "path": "/6-3",
-                            "name": "权限管理",
-                            "linkUrl":"permission.html",
-                            "children":[]
-                        },
-                        {
-                            "path": "/6-4",
-                            "name": "菜单管理",
-                            "linkUrl":"menu.html",
-                            "children":[]
-                        }
-                    ]
-                }
-            ],
+            menuList:[],
 
             activeName: 'first',
             dialogFormVisible4Edit:false,
@@ -311,16 +187,16 @@
         },
 
         created:function () {
-            // 获取当前登录人的用户名
+            // 获取当前登录的用户名
             axios.get("/user/getUsername.do").then((response)=>{
                 // 封装Result(flag,message,data)
                 this.username = response.data.data;
             });
 
-            // 根据用户名查询菜单列表
-            // axios.post("/user/getMenuListByusername.do").then((response)=>{
-            //     this.menuList=response.data.data;
-            // })
+            // 根据当前登录的用户名动态展示菜单列表
+            axios.post("/menu/getMenuListByUsername.do").then((response)=>{
+                this.menuList=response.data.data;
+            })
 
         },
         methods:{

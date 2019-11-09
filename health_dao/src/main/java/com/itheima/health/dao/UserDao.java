@@ -8,9 +8,6 @@ import java.util.List;
 
 public interface UserDao {
 
-
-    User findUserByUsername(String username);
-
     // 新增用户
     void add(User user);
 
@@ -43,4 +40,6 @@ public interface UserDao {
 
     // 更新个人信息
     void updateMyself(User user);
+
+    User findUserByUsername(String username);
 }

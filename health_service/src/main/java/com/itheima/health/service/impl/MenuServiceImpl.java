@@ -37,9 +37,9 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public void addMenu(Menu menu, Integer level) {
         menuDao.addMenu(menu);
-        Map<String,String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         map.put("level", level.toString());
-        map.put("name",menu.getName());
+        map.put("name", menu.getName());
         menuDao.updateLevelById(map);
     }
 
@@ -81,8 +81,35 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public PageResult findPageQuery(Integer currentPage, Integer pageSize, String queryString) {
-        PageHelper.startPage(currentPage,pageSize);
+        PageHelper.startPage(currentPage, pageSize);
         Page<Menu> page = menuDao.findPageQuery(queryString);
-        return new PageResult(page.getTotal(),page.getResult());
+        return new PageResult(page.getTotal(), page.getResult());
+    }
+
+
+    // 根据登录用户名动态显示菜单
+    @Override
+    public List<Menu> getMenuListByUsername(String username) {
+
+        List<Menu> menuList = menuDao.getParentMenuListByUsername(username);
+        System.out.println(menuList);
+        return getChildrenByParent(menuList);
+
+    }
+
+    // 通过上级菜单Id查询子菜单
+    public List<Menu> getChildrenByParent(List<Menu> menuList) {
+
+        if (menuList != null) {
+            // 遍历上级菜单
+            for (Menu menu : menuList) {
+                // 根据上级菜单Id查询下级菜单
+                List<Menu> child = menuDao.getChildrenByParentMenuId(menu.getId());
+                menu.setChildren(child);
+                getChildrenByParent(child);
+            }
+            return menuList;
+        }
+        return null;
     }
 }

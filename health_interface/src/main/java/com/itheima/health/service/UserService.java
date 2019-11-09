@@ -8,9 +8,6 @@ import java.util.List;
 
 public interface UserService {
 
-    // 根据登录用户名获取用户对象
-    User findUserByUsername(String username);
-
     // 新增用户
     void add(User user, List<Integer> roleList);
 
@@ -34,4 +31,7 @@ public interface UserService {
 
     // 更新个人信息
     void updateMyself(User user);
+
+    // 根据登录用户名获取用户对象
+    User findUserByUsername(String username);
 }
